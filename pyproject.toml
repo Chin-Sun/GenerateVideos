@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "feishu-drama-mvp"
+version = "0.1.0"
+description = "Persistent, safety-gated Chinese dialogue drama bot"
+requires-python = ">=3.13,<3.15"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.34,<1",
+  "sqlalchemy>=2.0.40,<2.1",
+  "psycopg[binary]>=3.2.9,<4",
+  "pydantic>=2.11,<3",
+  "pydantic-settings>=2.8,<3",
+  "httpx>=0.28,<0.29",
+  "lark-oapi>=1.4,<2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "pytest-asyncio>=0.26,<2", "ruff>=0.11,<1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/drama_bot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "BLE", "RUF022"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Header"]
+
+[tool.ruff.lint.per-file-ignores]
+# Durable worker boundaries must classify arbitrary provider/heartbeat exceptions.
+"src/drama_bot/core/worker.py" = ["BLE001"]
